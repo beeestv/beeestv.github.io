@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN,en,default">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.3.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.3.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.3.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.3.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.3.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="第一章：简介介绍了线程的历史、使用线程的原因、线程的优缺点以及常见的涉及线程的情况。对介绍中提到的内容标明了在本书中详细讨论的章节位置，为有明确需求的读者提供了指引。“线程无处不在”这一小节里介绍了各种框架对线程的使用及对其他代码的影响，提高读者对线程安全的重视。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程实战-读书笔记">
+<meta property="og:url" content="http://beeestv.github.io/2019/07/29/Java并发编程实战-读书笔记/index.html">
+<meta property="og:site_name" content="Talking To the Moon">
+<meta property="og:description" content="第一章：简介介绍了线程的历史、使用线程的原因、线程的优缺点以及常见的涉及线程的情况。对介绍中提到的内容标明了在本书中详细讨论的章节位置，为有明确需求的读者提供了指引。“线程无处不在”这一小节里介绍了各种框架对线程的使用及对其他代码的影响，提高读者对线程安全的重视。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-07-29T06:07:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java并发编程实战-读书笔记">
+<meta name="twitter:description" content="第一章：简介介绍了线程的历史、使用线程的原因、线程的优缺点以及常见的涉及线程的情况。对介绍中提到的内容标明了在本书中详细讨论的章节位置，为有明确需求的读者提供了指引。“线程无处不在”这一小节里介绍了各种框架对线程的使用及对其他代码的影响，提高读者对线程安全的重视。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://beeestv.github.io/2019/07/29/Java并发编程实战-读书笔记/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java并发编程实战-读书笔记 | Talking To the Moon</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Talking To the Moon</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://beeestv.github.io/2019/07/29/Java并发编程实战-读书笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="胡追">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Talking To the Moon">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java并发编程实战-读书笔记
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-29 14:02:38 / 修改时间：14:07:46" itemprop="dateCreated datePublished" datetime="2019-07-29T14:02:38+08:00">2019-07-29</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="第一章：简介"><a href="#第一章：简介" class="headerlink" title="第一章：简介"></a>第一章：简介</h2><p>介绍了线程的历史、使用线程的原因、线程的优缺点以及常见的涉及线程的情况。对介绍中提到的内容标明了在本书中详细讨论的章节位置，为有明确需求的读者提供了指引。“线程无处不在”这一小节里介绍了各种框架对线程的使用及对其他代码的影响，提高读者对线程安全的重视。<br><a id="more"></a></p>
+<h1 id="第一部分"><a href="#第一部分" class="headerlink" title="第一部分"></a>第一部分</h1><h2 id="第二章：线程安全性"><a href="#第二章：线程安全性" class="headerlink" title="第二章：线程安全性"></a>第二章：线程安全性</h2><p>对于线程安全性问题逐步复杂化，将各种情况逐步分析后给出解决方案。从原子性(java.util.concurrent.atomic包内的类)解决单变量线程安全到加锁同步(synchronized方法)复合操作，再通过细化加锁粒度(synchronized代码块)达到性能和简单性的平衡。</p>
+<h2 id="第三章：对象的共享"><a href="#第三章：对象的共享" class="headerlink" title="第三章：对象的共享"></a>第三章：对象的共享</h2><p>保证线程安全的几个概念</p>
+<p>可见性：Java线程会从内存中拷贝数据到线程中处理，如果处理之后还未更新内存，其他线程就会读取到过期数据。</p>
+<p>指令重排序：虚拟机或CPU对指令重排序，导致执行顺序和代码顺序不一致。</p>
+<p>volatile：不会重排序，不会缓存到处理器不可见的地方(内存以外)。</p>
+<p>线程封闭：不让其他线程访问当前线程对象，对其他线程封闭。1、Ad-hoc封闭，用private、局部变量等方式实现线程封闭，维护线程封闭性的责任完全由程序承担。2、栈封闭，只通过局部变量来访问对象，是ad-hoc的特例。3、ThreadLocal类，这是比较规范的方式。</p>
+<p>不变性：不可变对象一定是线程安全的。不可变对象需要符合一定条件：对象创建后状态不可修改(final修饰)；对象的所有属性都不可修改(final修饰)；对象创建期间没有创造匿名内部类(没有暴露this引用)。</p>
+<p>一些保证线程安全的方法</p>
+<ol>
+<li>将多个对象用线程安全的方式封装到类中(如不变性)，然后在使用类时用volatile保证可见性。</li>
+<li>不修改对象。</li>
+<li>使用不可变对象。</li>
+<li>对可变对象加锁保证线程安全(如Vector、HashTable、ConcurrentHashMap等线程安全集合)</li>
+</ol>
+<h2 id="第四章：对象的组合"><a href="#第四章：对象的组合" class="headerlink" title="第四章：对象的组合"></a>第四章：对象的组合</h2><p>我们并不希望每次内存访问都进行分析以保证线程安全，而是希望将一些现有的线程安全组件组合为更大规模的组件或程序。本章介绍一些组合模式，使一个类更容易成为线程安全的类。</p>
+<p>监视器模式：把类中所有可变对象封装起来，并加锁来保护。Collection接口的线程安全实现类都使用了监视器模式(如Vector、Hashtable)。</p>
+<p>委托：将对象的线程安全交给线程安全类来维护，如使用Collection接口的线程安全实现类。</p>
+<h2 id="第五章：基础构建模块"><a href="#第五章：基础构建模块" class="headerlink" title="第五章：基础构建模块"></a>第五章：基础构建模块</h2><p>本章介绍JDK中的并发基础模块，以及使用这些模块构建并发应用程式时的一些常用模式。</p>
+<h4 id="同步容器"><a href="#同步容器" class="headerlink" title="同步容器"></a>同步容器</h4><p>Vector、Hashtable等同步容器是线程安全的，但是某些复合操作时需要客户端加锁来保护。</p>
+<p>常见的复合操作：迭代、若没有则添加、若相等则删除、若相等则替换等。</p>
+<p>迭代时修改会导致ConcurrentModificationException异常。</p>
+<h4 id="并发容器"><a href="#并发容器" class="headerlink" title="并发容器"></a>并发容器</h4><p>ConcurrentHashMap：上锁粒度缩小到桶，这种机制称为分段锁。使用弱一致性迭代器，不会返回迭代修改异常，但是不保证size、isEmpty等方法返回结果的正确性。提供额外的原子操作：putIfAbsent、removeIfEqual、replaceIfEqual、replaceIfNull。</p>
+<p>CopyOnWriteArrayList：读不上锁，写时上锁，创造新数组，修改新数组后覆盖旧数组。</p>
+<h4 id="阻塞队列和生产者-消费者模式"><a href="#阻塞队列和生产者-消费者模式" class="headerlink" title="阻塞队列和生产者-消费者模式"></a>阻塞队列和生产者-消费者模式</h4><p>阻塞队列BlockingQueue有两种实现：LinkedBlockingQueue和ArrayBlockingQueue，有两个主要方法：put、take，当阻塞队列充满时put方法将会阻塞直到消费者take，当阻塞队列空时take方法将会阻塞直到生产者put。</p>
+<p>生产者-消费者模式可以很好得将生产者和消费者解耦，如果生产者和消费者分别是I/O、CPU密集型，那性能会得到极大提升。通过动态调整生产者、消费者的比例，可以避免生产速率大于消费速率导致阻塞队列永远无法消费完或消费者大量时间等待的情况，也可以通过生产者持久化任务的方式保存任务。</p>
+<blockquote>
+<p>PS：线程池就是生产者-消费者模式。</p>
+</blockquote>
+<h4 id="同步工具类"><a href="#同步工具类" class="headerlink" title="同步工具类"></a>同步工具类</h4><ol>
+<li>闭锁CountDownLatch：构造时给定一个正整数，每次任务完成时调用闭锁的countDown方法，在需要等待同步的地方调用闭锁的await方法，所有闭锁都countDown之后await解除。</li>
+<li>栅栏Barrier：构造时给定一个正整数，在需要同步的地方调用await方法，线程会开始等待，当所有线程都到达await方法调用处时，所有线程一起解除等待同时开始执行后面的代码。</li>
+<li>信号量Semaphore：构造时给定一个正整数信号量，acquire方法获得一个信号量，release方法释放一个信号量，当没有空闲信号量时，acquire会阻塞直到有信号量被释放。可以用来实现一个有界消费队列。</li>
+</ol>
+<blockquote>
+<p>闭锁和栅栏的比较：闭锁是所有线程都完成某一事件后解开任意地方的等待，栅栏是所有线程都到达某一行代码后同时解开等待继续执行后面的代码。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/01/国内旅行Todo List/" rel="next" title="国内旅行Todo List">
+                <i class="fa fa-chevron-left"></i> 国内旅行Todo List
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/29/机器学习-周志华-读书笔记/" rel="prev" title="机器学习(周志华)-读书笔记">
+                机器学习(周志华)-读书笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="胡追" />
+            
+              <p class="site-author-name" itemprop="name">胡追</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">9</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  <a href="https://weibo.com/2035265141/profile" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+                  
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://instagram.com/faultyman" target="_blank" title="Instagram"><i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  
+                </span>
+              
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一章：简介"><span class="nav-number">1.</span> <span class="nav-text">第一章：简介</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第一部分"><span class="nav-number"></span> <span class="nav-text">第一部分</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第二章：线程安全性"><span class="nav-number">1.</span> <span class="nav-text">第二章：线程安全性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三章：对象的共享"><span class="nav-number">2.</span> <span class="nav-text">第三章：对象的共享</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四章：对象的组合"><span class="nav-number">3.</span> <span class="nav-text">第四章：对象的组合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第五章：基础构建模块"><span class="nav-number">4.</span> <span class="nav-text">第五章：基础构建模块</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#同步容器"><span class="nav-number">4.0.1.</span> <span class="nav-text">同步容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#并发容器"><span class="nav-number">4.0.2.</span> <span class="nav-text">并发容器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#阻塞队列和生产者-消费者模式"><span class="nav-number">4.0.3.</span> <span class="nav-text">阻塞队列和生产者-消费者模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#同步工具类"><span class="nav-number">4.0.4.</span> <span class="nav-text">同步工具类</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">胡追</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动 v3.7.1</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a class="theme-link" target="_blank" href="https://theme-next.org">NexT.Muse</a> v6.3.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.3.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.3.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.3.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.3.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.3.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
